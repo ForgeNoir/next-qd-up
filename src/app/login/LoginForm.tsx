@@ -1,14 +1,17 @@
 'use client'
 import React from 'react';
 import { loginWithGoogle } from '../../services/auth.service';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
 
+    const router = useRouter();
 
     const handleLogin = async () => {
         try {
             await loginWithGoogle();
             console.log('Login successful')
+
 
         } catch (error) {
             // If loginWithGoogle throws, handle the error here

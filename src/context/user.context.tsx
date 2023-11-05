@@ -38,7 +38,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             } else {
                 // User is signed out
                 setCurrentUser(null);
-                router.push('/login')
+                router.push('/')
             }
         });
 

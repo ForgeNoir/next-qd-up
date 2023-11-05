@@ -17,17 +17,16 @@ export default function NavBar({ currentUser }: Props) {
     const handleClick:
         | React.MouseEventHandler<HTMLButtonElement>
         | undefined = async () => {
+        console.log("click")
         const navToLogin = () => {
             router.push("/login");
         };
 
         if (currentUser) {
             await logout();
-        } else {
-            router.push("/login");
         }
         if (!currentUser) {
-            await navToLogin();
+            navToLogin();
         }
     };
 
@@ -38,7 +37,7 @@ export default function NavBar({ currentUser }: Props) {
             } w-full flex flex-row justify-end items-center text-lg font-thin text-slate-300 border-red-500`}
         >
 
-            <div onClick={()=>router.push('/')} className='flex  flex-grow justify-start items-center  text-2xl text-slate-300 px-10 '>
+            <div className='flex  flex-grow justify-start items-center  text-2xl text-slate-300 px-10 '>
                 <Image width={70} height={150} alt='logo' className=' p-2 object-cover' src='./line-up-single-line-svgrepo-com.svg'  />
                 <p className="relative right-5 font-extrabold">UP</p>
                 </div>
@@ -52,7 +51,7 @@ export default function NavBar({ currentUser }: Props) {
                     </div>
                 )}
 
-                {pathname !== "login" && (
+                {(pathname !== "login" ) && (
                     <button
                         onClick={handleClick}
                         className="relative px-5 rounded-full m-5 border-[1px] border-purple-600  hover:bg-purple-600 text-slate-300 text-2xl hover:font-semibold"
