@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { loginWithGoogle } from '../../services/auth.service';
+import { loginWithGoogle } from '../../services/user/auth.service';
 import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {

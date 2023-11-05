@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { logout } from "@/services/auth.service";
+import { logout } from "@/services/user/auth.service";
 import { User } from "@/models/user.model";
 import { usePathname, useRouter } from "next/navigation";
 // import {logo} from '../public/tube-queue-svgrepo-com.svg'
@@ -41,15 +41,18 @@ export default function NavBar({ currentUser }: Props) {
                 <Image width={70} height={150} alt='logo' className=' p-2 object-cover' src='./line-up-single-line-svgrepo-com.svg'  />
                 <p className="relative right-5 font-extrabold">UP</p>
                 </div>
-            <div className='w-[90vw] flex flex-row justify-end items-center'>
+            <div className='w-[90vw] flex flex-row justify-end items-center px-5 mx-5'>
                 {currentUser && (
                     <div>
                         <span>Welcome back </span>
                         <span className="font-bold">
-                            {currentUser?.name.split(" ")[0]}!!{" "}
+                            {currentUser?.name.split(" ")[0]}!{" "}
                         </span>
                     </div>
                 )}
+                        <div className='z-1 relative mx-5 grayscale-50 rounded-full border-2 border-opacity-50 border-gray-500 object-cover hover:scale-105 hover:border-2 hover:border-purple-600'>
+                            <img width={50} height={50} alt='user-photo' src={currentUser?.photoURL} className='grayscale-100 rounded-full object-cover' />
+                        </div>
 
                 {(pathname !== "login" ) && (
                     <button

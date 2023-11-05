@@ -10,8 +10,6 @@ export default function DashboardPage() {
 
     const { currentUser } = useContext(UserContext);
 
-    console.log("currentUser:",currentUser)
-
     return (
         <div className="flex flex-col justify-center items-center h-full" >
         <NavBar currentUser={currentUser} />
