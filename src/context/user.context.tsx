@@ -34,9 +34,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                     // ...other user properties
                 };
                 setCurrentUser(user);
+                router.push('/dashboard')
             } else {
                 // User is signed out
                 setCurrentUser(null);
+                router.push('/login')
             }
         });
 
