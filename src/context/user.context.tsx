@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "../../firebase.config";
 import { User } from "@/models/user.model";
 import { logout } from "@/services/user/auth.service";
-import { createNewFirebaseUser } from "@/services/user/user.service";
+import { createNewFirestoreUser } from "@/services/user/user.service";
 
 interface UserProviderProps {
     children: React.ReactNode;
@@ -69,15 +69,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                 const user: User = {
                     id: firebaseUser.uid,
                     role: "member",
+                    name: firebaseUser.displayName || "",
                     email: firebaseUser.email || "",
-                    name: firebaseUser.displayName || "no-name",
                     photoURL: firebaseUser.photoURL || "",
                     createdAt: firebaseUser.metadata.creationTime || "",
-                    // ...other user properties
                 };
                 setCurrentUser(user);
-                createNewFirebaseUser(user);
-                router.push("/dashboard");
+                createNewFirestoreUser(user);
+                // router.push("/dashboard");
             } else {
                 // User is signed out
                 setCurrentUser(null);
@@ -89,6 +88,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         // Cleanup subscription on unmount
         return unsubscribe;
     }, [router]);
+
+    //
 
     return (
         <UserContext.Provider value={{ currentUser, setCurrentUser }}>

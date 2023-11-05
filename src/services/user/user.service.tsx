@@ -2,7 +2,7 @@ const { db } = require("../../../firebase.config");
 import { FirebaseUser } from "@/models/user.model";
 import { doc, getDoc, setDoc, FirestoreError } from "firebase/firestore";
 
-export const createNewFirebaseUser = async (user: FirebaseUser) => {
+export const createNewFirestoreUser = async (user: FirebaseUser) => {
     console.log('firebase user:',user)
     try {
         const userRef = doc(db, "users", user.id);
