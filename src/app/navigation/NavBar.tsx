@@ -39,7 +39,7 @@ export default function NavBar({ currentUser }: Props) {
             <div className="flex  flex-grow justify-start items-center  text-2xl text-slate-300 px-10 ">
                 <Image
                     width={70}
-                    height={150}
+                    height={70}
                     alt="logo"
                     className=" p-2 object-cover"
                     src="./line-up-single-line-svgrepo-com.svg"
@@ -50,7 +50,17 @@ export default function NavBar({ currentUser }: Props) {
                 {currentUser && (
                     <div>
                         <button
-                            onClick={()=>router.push(`/profiles/${currentUser.id}`)}
+                            onClick={() =>
+                                router.push(`/profiles/`)
+                            }
+                            className="relative px-5 rounded-full m-5 border-[1px] border-purple-600  hover:bg-purple-600 text-slate-300 text-2xl hover:font-semibold"
+                        >
+                            Directory
+                        </button>
+                        <button
+                            onClick={() =>
+                                router.push(`/profiles/${currentUser.id}`)
+                            }
                             className="relative px-5 rounded-full m-5 border-[1px] border-purple-600  hover:bg-purple-600 text-slate-300 text-2xl hover:font-semibold"
                         >
                             My Profile

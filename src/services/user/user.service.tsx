@@ -40,3 +40,14 @@ export const getUserById = async (id: string) => {
         console.log("No such document!");
     }
 }
+
+export const getUsers = async () => {
+    const usersRef = doc(db, "users");
+    const docSnap = await getDoc(usersRef);
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        return docSnap.data()
+    } else {
+        console.log("No such document!");
+    }
+}

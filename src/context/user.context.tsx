@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { auth } from "../../firebase.config";
 import { User } from "@/models/user.model";
 import { logout } from "@/services/user/auth.service";
+import { getUsers } from "@/services/user/user.service";
 
 interface UserProviderProps {
     children: React.ReactNode;
@@ -14,19 +15,22 @@ interface UserProviderProps {
 export const UserContext = createContext<{
     currentUser: User | null;
     setCurrentUser: (user: User | null) => void;
+    allUsers: User[];
+    setAllUsers: (users: User[] | []) => void;
 }>({
     currentUser: null,
     setCurrentUser: () => {},
+    allUsers: [],
+    setAllUsers: () => {},
 });
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [allUsers, setAllUsers] = useState<User[] | []>([]);
     const router = useRouter();
     const homePath = usePathname()
     const pathname = usePathname().split("/")[1];
-
-    console.log(pathname);
-
     const TIMEOUT_PERIOD = 30 * 60 * 1000; // 30 minutes
 
     const signOutUser = () => {
@@ -71,6 +75,35 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }, []);
 
 
+    // All users global state setter
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const usersData = await getUsers();
+            console.log("data", usersData);
+
+            const fetchedUsers: User[] = usersData?.map((userData: User) => {
+                const user: User = {
+                    id: userData.id,
+                    role: userData.role,
+                    name: userData.name,
+                    email: userData.email,
+                    photoURL: userData.photoURL,
+                    createdAt: userData.createdAt,
+                };
+                return user;
+            });
+
+            setAllUsers(fetchedUsers);
+            console.log(allUsers);
+        };
+
+        fetchUsers().catch((error) => {
+            console.error(error);
+        });
+    });
+
+
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -106,7 +139,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }, [pathname, currentUser]);
 
     return (
-        <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+        <UserContext.Provider value={{ currentUser, setCurrentUser, allUsers, setAllUsers }}>
             {children}
         </UserContext.Provider>
     );
