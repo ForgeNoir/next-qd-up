@@ -50,7 +50,7 @@ export default function NavBar({ currentUser }: Props) {
                 {currentUser && (
                     <div>
                         <button
-                            onClick={()=>router.push(`/users/${currentUser.id}`)}
+                            onClick={()=>router.push(`/profiles/${currentUser.id}`)}
                             className="relative px-5 rounded-full m-5 border-[1px] border-purple-600  hover:bg-purple-600 text-slate-300 text-2xl hover:font-semibold"
                         >
                             My Profile

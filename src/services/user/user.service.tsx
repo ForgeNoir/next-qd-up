@@ -29,3 +29,14 @@ export const createNewFirestoreUser = async (user: FirebaseUser) => {
         }
     }
 };
+
+export const getUserById = async (id: string) => {
+    const userRef = doc(db, "users", id);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        return docSnap.data()
+    } else {
+        console.log("No such document!");
+    }
+}
