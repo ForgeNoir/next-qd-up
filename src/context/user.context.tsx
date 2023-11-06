@@ -2,11 +2,10 @@
 
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { auth } from "../../firebase.config";
 import { User } from "@/models/user.model";
 import { logout } from "@/services/user/auth.service";
-import { createNewFirestoreUser } from "@/services/user/user.service";
 
 interface UserProviderProps {
     children: React.ReactNode;
@@ -23,6 +22,10 @@ export const UserContext = createContext<{
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const router = useRouter();
+    const homePath = usePathname()
+    const pathname = usePathname().split("/")[1];
+
+    console.log(pathname);
 
     const TIMEOUT_PERIOD = 30 * 60 * 1000; // 30 minutes
 
@@ -39,28 +42,35 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
 
     let inactivityTimer: ReturnType<typeof setTimeout>;
-    const resetInactivityTimer = () => {
-        // console.log("reset")
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(signOutUser, TIMEOUT_PERIOD);
-    };
+    useEffect(() => {
+        const resetInactivityTimer = () => {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(signOutUser, TIMEOUT_PERIOD);
+        };
 
-    // Add event listeners for user activity
-    window.onload = resetInactivityTimer;
-    window.onmousemove = resetInactivityTimer;
-    window.onmousedown = resetInactivityTimer; // catches touchscreen presses
-    window.onclick = resetInactivityTimer; // catches touchpad clicks
-    window.onscroll = resetInactivityTimer; // catches scrolling with arrow keys
-    window.onkeydown = resetInactivityTimer;
+        const addActivityListeners = () => {
+            window.addEventListener('load', resetInactivityTimer);
+            window.addEventListener('mousemove', resetInactivityTimer);
+            window.addEventListener('mousedown', resetInactivityTimer);
+            window.addEventListener('click', resetInactivityTimer);
+            window.addEventListener('scroll', resetInactivityTimer);
+            window.addEventListener('keydown', resetInactivityTimer);
+        };
 
-    const removeActivityListeners = () => {
-        window.onload = null;
-        window.onmousemove = null;
-        window.onmousedown = null;
-        window.onclick = null;
-        window.onscroll = null;
-        window.onkeydown = null;
-    };
+        const removeActivityListeners = () => {
+            window.removeEventListener('load', resetInactivityTimer);
+            window.removeEventListener('mousemove', resetInactivityTimer);
+            window.removeEventListener('mousedown', resetInactivityTimer);
+            window.removeEventListener('click', resetInactivityTimer);
+            window.removeEventListener('scroll', resetInactivityTimer);
+            window.removeEventListener('keydown', resetInactivityTimer);
+        };
+
+        addActivityListeners();
+        return removeActivityListeners;
+    }, []);
+
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -75,13 +85,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                     createdAt: firebaseUser.metadata.creationTime || "",
                 };
                 setCurrentUser(user);
-                createNewFirestoreUser(user);
+
                 // router.push("/dashboard");
             } else {
                 // User is signed out
                 setCurrentUser(null);
-                removeActivityListeners();
-                router.push("/");
             }
         });
 
@@ -89,7 +97,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         return unsubscribe;
     }, [router]);
 
-    //
+    useEffect(() => {
+        // Redirect to dashboard if user is on login route and authenticated
+        if (currentUser && pathname === "login") {
+            router.push("/dashboard");
+        }
+
+    }, [pathname, currentUser]);
 
     return (
         <UserContext.Provider value={{ currentUser, setCurrentUser }}>
